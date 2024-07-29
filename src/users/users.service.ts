@@ -12,6 +12,10 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
+  async findOneByUserId(id: number): Promise<User | undefined> {
+    return this.userRepository.findOne({ where: { id } });
+  }
+
   async findOneByUsername(username: string): Promise<User | undefined> {
     return this.userRepository.findOne({ where: { username } });
   }
