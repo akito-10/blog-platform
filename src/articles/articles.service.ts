@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Article } from './article.entity';
@@ -23,5 +23,22 @@ export class ArticlesService {
       author: user,
     });
     return this.articleRepository.save(article);
+  }
+
+  async findAll(): Promise<Article[]> {
+    return this.articleRepository.find({ relations: ['author', 'comments'] });
+  }
+
+  async findOne(id: number): Promise<Article> {
+    const article = await this.articleRepository.findOne({
+      where: { id },
+      relations: ['author', 'comments'],
+    });
+
+    if (!article) {
+      throw new NotFoundException(`Article with ID ${id} not found`);
+    }
+
+    return article;
   }
 }
